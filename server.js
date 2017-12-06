@@ -9,7 +9,7 @@ var fs = require('fs');
 var express = require('express');
 var app = express();
 const ip = require('ip');
-const useragent = require('useragent');
+const UAParser = require('ua-parser-js');
 
 if (!process.env.DISABLE_XORIGIN) {
   app.use(function(req, res, next) {
@@ -42,10 +42,9 @@ app.route('/')
 
 app.route('/info')
   .get((req, res) => {
-    var agent = useragent.parse(req.headers['user-agent']);
     let jsonTime = {
       "ip": ip.address(),
-      "software": agent.os.toString()
+      "software": `${req.headers['user-agent']}`
     };
     res.writeHead(200, {'Content-Type': 'application/json' });
     res.write(JSON.stringify(jsonTime));
