@@ -38,6 +38,16 @@ app.route('/')
 		  res.sendFile(process.cwd() + '/views/index.html');
     })
 
+app.route('/info')
+  .get((req, res) => {
+    let jsonTime = {
+      
+    };
+    res.writeHead(200, {'Content-Type': 'application/json' });
+    res.write(JSON.stringify(jsonTime));
+    res.end();
+});
+
 // Respond not found to all the wrong routes
 app.use(function(req, res, next){
   res.status(404);
