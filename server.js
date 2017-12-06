@@ -8,8 +8,6 @@
 var fs = require('fs');
 var express = require('express');
 var app = express();
-const ip = require('ip');
-const UAParser = require('ua-parser-js');
 
 if (!process.env.DISABLE_XORIGIN) {
   app.use(function(req, res, next) {
@@ -37,17 +35,25 @@ app.route('/_api/package.json')
   
 app.route('/')
     .get(function(req, res) {
+  
 		  res.sendFile(process.cwd() + '/views/index.html');
     })
 
 app.route('/info')
   .get((req, res) => {
-    let jsonTime = {
-      "ip": ip.address(),
-      "software": `${req.headers['user-agent']}`
+    let ip = req.headers['x-forwarded-for'];
+    let reqHead = req.headers['user-agent'];
+    let arch = reqHead.slice(reqHead.indexOf('(') + 1, reqHead.indexOf(')'));
+    let lang = req.headers["accept-language"];
+    ip = ip.slice(0, ip.indexOf(','));
+    lang = lang.slice(0, lang.indexOf(','));
+    let userInfo = {
+      "ip": ip,
+      "language": lang,
+      "software": arch
     };
     res.writeHead(200, {'Content-Type': 'application/json' });
-    res.write(JSON.stringify(jsonTime));
+    res.write(JSON.stringify(userInfo));
     res.end();
 });
 
